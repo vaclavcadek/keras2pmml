@@ -98,14 +98,17 @@ def keras2pmml(estimator, scaler, file, **kwargs):
 
     neural_weights = estimator.get_weights()[0::2]
     neural_biases = estimator.get_weights()[1::2]
-    neural_activations = ['tanh', 'tanh', 'logistic']
+    neural_activations = map(lambda x: x['config']['activation'], estimator.get_config())
     last_layer = len(neural_weights) - 1
     for layer, params in enumerate(zip(neural_weights, neural_biases, neural_activations)):
         weights = params[0]
         biases = params[1]
         activation = params[2]
         neural_layer = doc.createElement('NeuralLayer')
-        neural_layer.attributes['activationFunction'] = activation
+        if activation == 'sigmoid':
+            neural_layer.attributes['activationFunction'] = 'logistic'
+        else:
+            neural_layer.attributes['activationFunction'] = activation
         neural_network.appendChild(neural_layer)
         rows = weights.shape[0]
         cols = weights.shape[1]
