@@ -9,7 +9,7 @@ def keras2pmml(estimator, scaler, file, **kwargs):
         raise TypeError("The estimator object is not an instance of " + Sequential.__name__)
     if scaler is not None and not isinstance(scaler, StandardScaler):
         raise TypeError("The estimator object is not an instance of " + StandardScaler.__name__)
-    target_name = kwargs.get('target_name', 'class')
+    target = kwargs.get('target', 'class')
     target_values = kwargs.get('target_values', None)
     feature_names = kwargs.get('feature_names', None)
     copyright = kwargs.get('copyright', None)
@@ -40,7 +40,7 @@ def keras2pmml(estimator, scaler, file, **kwargs):
         data_dict.appendChild(data_field)
 
     data_field = doc.createElement('DataField')
-    data_field.attributes['name'] = target_name
+    data_field.attributes['name'] = target
     data_field.attributes['dataType'] = 'string'
     data_field.attributes['optype'] = 'categorical'
     data_dict.appendChild(data_field)
@@ -57,7 +57,7 @@ def keras2pmml(estimator, scaler, file, **kwargs):
     mining_schema = doc.createElement('MiningSchema')
     neural_network.appendChild(mining_schema)
     mining_field = doc.createElement('MiningField')
-    mining_field.attributes['name'] = target_name
+    mining_field.attributes['name'] = target
     mining_field.attributes['usageType'] = 'target'
     mining_schema.appendChild(mining_field)
     for f in feature_names:
@@ -125,7 +125,7 @@ def keras2pmml(estimator, scaler, file, **kwargs):
                 derived_field.attributes['optype'] = 'continuous'
                 derived_field.attributes['dataType'] = 'double'
                 norm_discrete = doc.createElement('NormDiscrete')
-                norm_discrete.attributes['field'] = target_name
+                norm_discrete.attributes['field'] = target
                 norm_discrete.attributes['value'] = target_values[j]
                 derived_field.appendChild(norm_discrete)
                 neural_output.appendChild(derived_field)

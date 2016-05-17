@@ -7,7 +7,7 @@ setup(name='keras2pmml',
       author_email='vaclav.cadek@gmail.com',
       url='https://github.com/vaclavcadek/keras2pmml',
       license='MIT',
-      install_requires=['theano', 'keras'],
+      install_requires=['theano', 'keras', 'scikit-learn'],
       extras_require={},
       packages=['keras2pmml']
       )
