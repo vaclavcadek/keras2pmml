@@ -54,6 +54,16 @@ def _generate_variables(doc, root, neural_network, transformer, feature_names, t
     mining_field.attributes['name'] = target_name
     mining_field.attributes['usageType'] = 'target'
     output = doc.createElement('Output')
+    for t in target_values:
+        value_field = doc.createElement('Value')
+        data_field.appendChild(value_field)
+        value_field.attributes['value'] = t
+
+        output_field = doc.createElement('OutputField')
+        output.appendChild(output_field)
+        output_field.attributes['name'] = 'probability_{}'.format(t)
+        output_field.attributes['feature'] = 'probability'
+        output_field.attributes['value'] = t
     neural_network.appendChild(output)
     neural_inputs = doc.createElement('NeuralInputs')
     neural_network.appendChild(neural_inputs)
@@ -91,16 +101,6 @@ def _generate_variables(doc, root, neural_network, transformer, feature_names, t
             field_ref = doc.createElement('FieldRef')
             derived_field.appendChild(field_ref)
             field_ref.attributes['field'] = f
-    for t in target_values:
-        value_field = doc.createElement('Value')
-        data_field.appendChild(value_field)
-        value_field.attributes['value'] = t
-
-        output_field = doc.createElement('OutputField')
-        output.appendChild(output_field)
-        output_field.attributes['name'] = 'probability_{}'.format(t)
-        output_field.attributes['feature'] = 'probability'
-        output_field.attributes['value'] = t
 
 
 def _generate_layers(doc, estimator, neural_network, target_name, target_values):
