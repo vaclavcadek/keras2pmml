@@ -144,7 +144,7 @@ def _generate_neural_outputs(neural_network, estimator, target_name, target_valu
     neural_outputs = ET.SubElement(neural_network, 'NeuralOutputs')
     for j in range(len(target_values)):
         neural_output = ET.SubElement(neural_outputs, 'NeuralOutput')
-        neural_output.set('outputNeuron', '{},{}'.format(num_layers, j))
+        neural_output.set('outputNeuron', '{},{}'.format(num_layers - 1, j))
         derived_field = ET.SubElement(neural_output, 'DerivedField')
         derived_field.set('optype', 'continuous')
         derived_field.set('dataType', 'double')
