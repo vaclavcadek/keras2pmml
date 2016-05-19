@@ -140,11 +140,11 @@ def _generate_neural_layers(neural_network, estimator):
 
 
 def _generate_neural_outputs(neural_network, estimator, target_name, target_values):
-    num_layers = estimator.output_shape[1]
+    num_layers = len(estimator.layers)
     neural_outputs = ET.SubElement(neural_network, 'NeuralOutputs')
     for j in range(len(target_values)):
         neural_output = ET.SubElement(neural_outputs, 'NeuralOutput')
-        neural_output.set('outputNeuron', '{},{}'.format(num_layers - 1, j))
+        neural_output.set('outputNeuron', '{},{}'.format(num_layers, j))
         derived_field = ET.SubElement(neural_output, 'DerivedField')
         derived_field.set('optype', 'continuous')
         derived_field.set('dataType', 'double')
@@ -169,5 +169,5 @@ def keras2pmml(estimator, transformer, file, **kwargs):
     _generate_neural_network(pmml, estimator, transformer, feature_names, target_name, target_values, model_name)
 
     tree = ET.ElementTree(pmml)
-    tree.write(file)
+    tree.write(file, encoding='utf-8', xml_declaration=True)
     print('[x] Generation of PMML successful.')
