@@ -34,9 +34,12 @@ def _validate_inputs(model, transformer, feature_names, target_values):
 
 def _generate_header(root, kwargs):
     description = kwargs.get('description', None)
+    copyright = kwargs.get('copyright', None)
     header = ET.SubElement(root, 'Header')
-    header.set('copyright', kwargs.get('copyright', ''))
-    header.set('description', description)
+    if copyright:
+        header.set('copyright', copyright)
+    if description:
+        header.set('description', description)
     timestamp = ET.SubElement(header, 'Timestamp')
     timestamp.text = str(datetime.now())
     return header
