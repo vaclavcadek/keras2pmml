@@ -4,10 +4,10 @@ except ImportError:
     import xml.etree.ElementTree as ET
 from datetime import datetime
 from keras.models import Sequential
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
 
 SUPPORTED_MODELS = frozenset([Sequential])
-SUPPORTED_TRANSFORMERS = frozenset([StandardScaler])
+SUPPORTED_TRANSFORMERS = frozenset([StandardScaler, MinMaxScaler])
 SUPPORTED_ACTIVATIONS = {
     'tanh': 'tanh',
     'sigmoid': 'logistic'
@@ -106,15 +106,25 @@ def _generate_neural_inputs(neural_network, transformer, feature_names):
         derived_field = ET.SubElement(neural_input, 'DerivedField')
         derived_field.set('optype', 'continuous')
         derived_field.set('dataType', 'double')
-        if transformer is not None:
-            norm_continuous = ET.SubElement(derived_field, 'NormContinuous')
-            norm_continuous.set('field', f)
-            ln1 = ET.SubElement(norm_continuous, 'LinearNorm')
-            ln2 = ET.SubElement(norm_continuous, 'LinearNorm')
-            ln1.set('orig', '0.0')
-            ln1.set('norm', str(- transformer.mean_[i] / transformer.scale_[i]))
-            ln2.set('orig', str(transformer.mean_[i]))
-            ln2.set('norm', '0.0')
+        if transformer is not None and type(transformer) in SUPPORTED_TRANSFORMERS:
+            if isinstance(transformer, StandardScaler):
+                norm_continuous = ET.SubElement(derived_field, 'NormContinuous')
+                norm_continuous.set('field', f)
+                ln1 = ET.SubElement(norm_continuous, 'LinearNorm')
+                ln2 = ET.SubElement(norm_continuous, 'LinearNorm')
+                ln1.set('orig', '0.0')
+                ln1.set('norm', str(- transformer.mean_[i] / transformer.scale_[i]))
+                ln2.set('orig', str(transformer.mean_[i]))
+                ln2.set('norm', '0.0')
+            elif isinstance(transformer, MinMaxScaler):
+                norm_continuous = ET.SubElement(derived_field, 'NormContinuous')
+                norm_continuous.set('field', f)
+                ln1 = ET.SubElement(norm_continuous, 'LinearNorm')
+                ln2 = ET.SubElement(norm_continuous, 'LinearNorm')
+                ln1.set('orig', '0.0')
+                ln1.set('norm', str(- transformer.data_min_[i] / (transformer.data_max_[i] - transformer.data_min_[i])))
+                ln2.set('orig', str(transformer.data_min_[i]))
+                ln2.set('norm', '0.0')
         else:
             field_ref = ET.SubElement(derived_field, 'FieldRef')
             field_ref.set('field', f)

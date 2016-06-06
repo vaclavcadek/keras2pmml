@@ -2,11 +2,16 @@ from keras.datasets import mnist
 from keras.models import Sequential
 from keras.layers.core import Dense
 from keras2pmml import keras2pmml
+from sklearn.preprocessing import MinMaxScaler
 
 (X_train, _), (X_test, _) = mnist.load_data()
 
-X_train = X_train.reshape(X_train.shape[0], 28 * 28)
-X_test = X_test.reshape(X_test.shape[0], 28 * 28)
+X_train = X_train.reshape(X_train.shape[0], 28 * 28).astype(float)
+X_test = X_test.reshape(X_test.shape[0], 28 * 28).astype(float)
+
+mms = MinMaxScaler()
+X_train_scaled = mms.fit_transform(X_train)
+X_test_scaled = mms.transform(X_test)
 
 autoencoder = Sequential()
 # encoding ~ input layer
@@ -28,4 +33,4 @@ params = {
     'model_name': 'MNIST Autoencoder'
 }
 
-keras2pmml(autoencoder, None, 'mnist_autoencoder.pmml', **params)
+keras2pmml(autoencoder, mms, 'mnist_autoencoder.pmml', **params)
