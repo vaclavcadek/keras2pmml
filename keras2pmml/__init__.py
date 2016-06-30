@@ -108,14 +108,20 @@ def _generate_neural_inputs(neural_network, transformer, feature_names):
         derived_field.set('dataType', 'double')
         if transformer is not None and type(transformer) in SUPPORTED_TRANSFORMERS:
             if isinstance(transformer, StandardScaler):
-                norm_continuous = ET.SubElement(derived_field, 'NormContinuous')
-                norm_continuous.set('field', f)
-                ln1 = ET.SubElement(norm_continuous, 'LinearNorm')
-                ln2 = ET.SubElement(norm_continuous, 'LinearNorm')
-                ln1.set('orig', '0.0')
-                ln1.set('norm', str(- transformer.mean_[i] / transformer.scale_[i]))
-                ln2.set('orig', str(transformer.mean_[i]))
-                ln2.set('norm', '0.0')
+                if transformer.mean_[i] == 0:
+                    norm_discrete = ET.SubElement(derived_field, 'NormDiscrete')
+                    norm_discrete.set('field', f)
+                    norm_discrete.set('value', '0.0')
+                    print('[!] {field} has zero mean, avoiding scaling. Check whether your data does not contains only one value!'.format(field=f))
+                else:
+                    norm_continuous = ET.SubElement(derived_field, 'NormContinuous')
+                    norm_continuous.set('field', f)
+                    ln1 = ET.SubElement(norm_continuous, 'LinearNorm')
+                    ln2 = ET.SubElement(norm_continuous, 'LinearNorm')
+                    ln1.set('orig', '0.0')
+                    ln1.set('norm', str(- transformer.mean_[i] / transformer.scale_[i]))
+                    ln2.set('orig', str(transformer.mean_[i]))
+                    ln2.set('norm', '0.0')
             elif isinstance(transformer, MinMaxScaler):
                 norm_continuous = ET.SubElement(derived_field, 'NormContinuous')
                 norm_continuous.set('field', f)
@@ -126,8 +132,8 @@ def _generate_neural_inputs(neural_network, transformer, feature_names):
                 ln2.set('orig', str(transformer.data_min_[i]))
                 ln2.set('norm', '0.0')
         else:
-            field_ref = ET.SubElement(derived_field, 'FieldRef')
-            field_ref.set('field', f)
+            norm_discrete = ET.SubElement(derived_field, 'FieldRef')
+            norm_discrete.set('field', f)
 
 
 def _generate_neural_layers(neural_network, estimator):
