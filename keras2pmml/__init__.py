@@ -67,6 +67,7 @@ def _generate_data_dictionary(root, feature_names, target_name, target_values):
 def _generate_neural_network(root, estimator, transformer, feature_names, target_name, target_values, model_name=None):
     neural_network = ET.SubElement(root, 'NeuralNetwork')
     neural_network.set('functionName', 'classification')
+    neural_network.set('activationFunction', 'logistic')
     if model_name:
         neural_network.set('modelName', model_name)
     _generate_mining_schema(neural_network, feature_names, target_name)
@@ -85,6 +86,7 @@ def _generate_mining_schema(neural_network, feature_names, target_name):
     for f in feature_names:
         mining_field = ET.SubElement(mining_schema, 'MiningField')
         mining_field.set('name', f)
+        mining_field.set('usageType', 'active')
     return mining_schema
 
 
@@ -161,18 +163,18 @@ def _generate_neural_layers(neural_network, estimator):
 def _generate_neural_outputs(neural_network, estimator, target_name, target_values):
     num_layers = len(estimator.layers)
     neural_outputs = ET.SubElement(neural_network, 'NeuralOutputs')
-    for j in range(len(target_values)):
+    for i in range(len(target_values)):
         neural_output = ET.SubElement(neural_outputs, 'NeuralOutput')
-        neural_output.set('outputNeuron', '{},{}'.format(num_layers, j))
+        neural_output.set('outputNeuron', '{},{}'.format(num_layers, i))
         derived_field = ET.SubElement(neural_output, 'DerivedField')
         derived_field.set('optype', 'continuous')
         derived_field.set('dataType', 'double')
         norm_discrete = ET.SubElement(derived_field, 'NormDiscrete')
         norm_discrete.set('field', target_name)
-        norm_discrete.set('value', target_values[j])
+        norm_discrete.set('value', target_values[i])
 
 
-def keras2pmml(estimator, transformer, file, **kwargs):
+def keras2pmml(estimator, transformer=None, file=None, **kwargs):
     feature_names = kwargs.get('feature_names', [])
     target_name = kwargs.get('target_name', 'class')
     target_values = kwargs.get('target_values', [])
@@ -188,5 +190,7 @@ def keras2pmml(estimator, transformer, file, **kwargs):
     _generate_neural_network(pmml, estimator, transformer, feature_names, target_name, target_values, model_name)
 
     tree = ET.ElementTree(pmml)
-    tree.write(file, encoding='utf-8', xml_declaration=True)
     print('[x] Generation of PMML successful.')
+    if file:
+        tree.write(file, encoding='utf-8', xml_declaration=True)
+    return tree

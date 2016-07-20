@@ -40,4 +40,4 @@ params = {
     'model_name': 'Iris Model'
 }
 
-keras2pmml(model, std, 'keras_iris.pmml', **params)
+keras2pmml(model, None, 'keras_iris.pmml', **params)
