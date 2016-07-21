@@ -89,7 +89,7 @@ class GenericFieldsTestCase(unittest.TestCase):
             biases = self.model.layers[i].get_weights()[1]
             for j, n in enumerate(l.findall('Neuron')):
                 self.assertListEqual(
-                    [float(c.attrib['weight']) for c in n.findall('Con')], weights[:, j].tolist(),
+                    [str(c.attrib['weight']) for c in n.findall('Con')], weights.astype(str)[:, j].tolist(),
                     'Verify correct weights and that is fully-connected from previous layer.'
                 )
-                self.assertEquals(n.attrib['bias'], biases[j])
+                self.assertEquals(n.attrib['bias'], biases.astype(str)[j])

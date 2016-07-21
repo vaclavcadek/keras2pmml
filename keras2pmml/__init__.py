@@ -143,8 +143,8 @@ def _generate_neural_layers(neural_network, estimator):
     layer_biases = estimator.get_weights()[1::2]
     layer_activations = map(lambda x: x['config']['activation'], estimator.get_config())
     for layer, params in enumerate(zip(layer_weights, layer_biases, layer_activations)):
-        weights = params[0]
-        biases = params[1]
+        weights = params[0].astype(str)
+        biases = params[1].astype(str)
         activation = params[2]
         neural_layer = ET.SubElement(neural_network, 'NeuralLayer')
         neural_layer.set('activationFunction', SUPPORTED_ACTIVATIONS[activation])
@@ -157,7 +157,7 @@ def _generate_neural_layers(neural_network, estimator):
             for i in range(rows):
                 connection = ET.SubElement(neuron, 'Con')
                 connection.set('from', '{},{}'.format(layer, i))
-                connection.set('weight', str(weights[i, j]))
+                connection.set('weight', weights[i, j])
 
 
 def _generate_neural_outputs(neural_network, estimator, target_name, target_values):
