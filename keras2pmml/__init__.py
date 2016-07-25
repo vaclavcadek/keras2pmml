@@ -114,7 +114,9 @@ def _generate_neural_inputs(neural_network, transformer, feature_names):
                     norm_discrete = ET.SubElement(derived_field, 'NormDiscrete')
                     norm_discrete.set('field', f)
                     norm_discrete.set('value', '0.0')
-                    print('[!] {field} has zero mean, avoiding scaling. Check whether your data does not contains only one value!'.format(field=f))
+                    print(
+                        '[!] {field} has zero mean, avoiding scaling. Check whether your data does not contains only one value!'.format(
+                            field=f))
                 else:
                     norm_continuous = ET.SubElement(derived_field, 'NormContinuous')
                     norm_continuous.set('field', f)
@@ -175,6 +177,16 @@ def _generate_neural_outputs(neural_network, estimator, target_name, target_valu
 
 
 def keras2pmml(estimator, transformer=None, file=None, **kwargs):
+    """
+    Exports Keras model as PMML.
+
+    :param estimator: Keras model to be exported as PMML (for supported models - see bellow).
+    :param transformer: if provided then scaling is applied to data fields.
+    :param file: name of the file where the PMML will be exported.
+    :param kwargs: set of params that affects PMML metadata - see documentation for details.
+    :return: XML element tree
+    """
+
     feature_names = kwargs.get('feature_names', [])
     target_name = kwargs.get('target_name', 'class')
     target_values = kwargs.get('target_values', [])

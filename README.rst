@@ -13,7 +13,7 @@ To install kearas2pmml, simply:
 Example
 -------
 
-Example on Iris data
+Example on Iris data - for more examples see the examples folder.
 
 .. code-block:: python
 
@@ -59,7 +59,21 @@ Example on Iris data
         'model_name': 'Iris Model'
     }
 
-    keras2pmml(model, std, 'keras_iris.pmml', **params)
+    keras2pmml(estimator=model, transformer=std, file='keras_iris.pmml', **params)
+
+
+
+Params explained
+----------------
+- estimator: Keras model to be exported as PMML (for supported models - see bellow).
+- transformer: if provided (and it's supported - see bellow) then scaling is applied to data fields.
+- file: name of the file where the PMML will be exported.
+- feature_names: when provided and have same shape as input layer, then features will have custom names, otherwise generic names (x\ :sub:`0`\,..., x\ :sub:`n-1`\) will be used.
+- target_values: when provided and have same shape as output layer, then target values will have custom names, otherwise generic names (y\ :sub:`0`\,..., y\ :sub:`n-1`\) will be used.
+- target_name: when provided then target variable will have custom name, otherwise generic name **class** will be used.
+- copyright: who is the author of the model.
+- description: optional parameter that sets *description* within PMML document.
+- model_name: optional parameter that sets *model_name* within PMML document.
 
 What is supported?
 ------------------
