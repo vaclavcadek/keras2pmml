@@ -28,8 +28,8 @@ model = Sequential()
 model.add(Dense(input_dim=X_train.shape[1], output_dim=5, activation='tanh'))
 model.add(Dense(input_dim=5, output_dim=y_test_ohe.shape[1], activation='sigmoid'))
 model.compile(loss='categorical_crossentropy', optimizer='sgd')
-# model.fit(X_train_scaled, y_train_ohe, nb_epoch=10, batch_size=1, verbose=3,
-#           validation_data=(X_test_scaled, y_test_ohe))
+model.fit(X_train_scaled, y_train_ohe, nb_epoch=10, batch_size=1, verbose=3,
+          validation_data=(X_test_scaled, y_test_ohe))
 
 params = {
     'feature_names': ['sepal_length', 'sepal_width', 'petal_length', 'petal_width'],
