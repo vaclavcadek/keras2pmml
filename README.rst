@@ -4,7 +4,7 @@ keras2pmml
 Installation
 ------------
 
-To install kearas2pmml, simply:
+To install keras2pmml, simply:
 
 .. code-block:: bash
 
