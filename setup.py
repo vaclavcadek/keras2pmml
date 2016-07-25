@@ -19,7 +19,7 @@ setup(
     url='https://github.com/vaclavcadek/keras2pmml',
     author='Václav Čadek',
     author_email='vaclavcadek@gmail.com',
-    install_requires=['theano', 'keras', 'scikit-learn'],
+    install_requires=['theano==0.8.2', 'keras==1.0.6', 'scikit-learn==0.17.1'],
     classifiers=[
         'Intended Audience :: Science/Research',
         'Intended Audience :: Developers',
