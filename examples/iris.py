@@ -16,7 +16,7 @@ theano.config.floatX = 'float32'
 X = X.astype(theano.config.floatX)
 y = y.astype(np.int32)
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.3, stratify=y)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.3)
 
 std = StandardScaler()
 X_train_scaled = std.fit_transform(X_train)
