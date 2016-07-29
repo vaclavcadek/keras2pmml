@@ -1,6 +1,19 @@
 keras2pmml
 ==========
 
+Keras2pmml is simple exporter for Keras models (for supported models see bellow) into PMML text format which address
+the problems mentioned bellow.
+
+Storing predictive models using binary format (e.g. Pickle) may be dangerous from several perspectives - naming few:
+
+* **binary compatibility**:you update the libraries and may not be able to open the model serialized with older version
+* **dangerous code**: when you would use model made by someone else
+* **interpretability**: model cannot be easily opened and reviewed by human
+* etc.
+
+In addition the PMML is able to persist scaling of the raw input features which helps gradient descent to run smoothly
+through optimization space.
+
 Installation
 ------------
 
