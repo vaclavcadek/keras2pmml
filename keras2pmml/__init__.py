@@ -10,7 +10,8 @@ SUPPORTED_MODELS = frozenset([Sequential])
 SUPPORTED_TRANSFORMERS = frozenset([StandardScaler, MinMaxScaler])
 SUPPORTED_ACTIVATIONS = {
     'tanh': 'tanh',
-    'sigmoid': 'logistic'
+    'sigmoid': 'logistic',
+    'relu': 'rectifier'
 }
 
 
@@ -195,8 +196,8 @@ def keras2pmml(estimator, transformer=None, file=None, **kwargs):
     feature_names, target_values = _validate_inputs(estimator, transformer, feature_names, target_values)
 
     pmml = ET.Element('PMML')
-    pmml.set('version', '4.2.1')
-    pmml.set('xmlns', 'http://www.dmg.org/PMML-4_2')
+    pmml.set('version', '4.3')
+    pmml.set('xmlns', 'http://www.dmg.org/PMML-4_3')
     _generate_header(pmml, kwargs)
     _generate_data_dictionary(pmml, feature_names, target_name, target_values)
     _generate_neural_network(pmml, estimator, transformer, feature_names, target_name, target_values, model_name)
