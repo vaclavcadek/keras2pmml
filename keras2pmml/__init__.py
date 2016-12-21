@@ -124,8 +124,8 @@ def _generate_neural_inputs(neural_network, transformer, feature_names):
                     ln1 = ET.SubElement(norm_continuous, 'LinearNorm')
                     ln2 = ET.SubElement(norm_continuous, 'LinearNorm')
                     ln1.set('orig', '0.0')
-                    ln1.set('norm', str(- transformer.mean_[i] / transformer.scale_[i]))
-                    ln2.set('orig', str(transformer.mean_[i]))
+                    ln1.set('norm', (- transformer.mean_[i] / transformer.scale_[i]).astype(str))
+                    ln2.set('orig', (transformer.mean_[i]).astype(str))
                     ln2.set('norm', '0.0')
             elif isinstance(transformer, MinMaxScaler):
                 norm_continuous = ET.SubElement(derived_field, 'NormContinuous')
@@ -133,8 +133,8 @@ def _generate_neural_inputs(neural_network, transformer, feature_names):
                 ln1 = ET.SubElement(norm_continuous, 'LinearNorm')
                 ln2 = ET.SubElement(norm_continuous, 'LinearNorm')
                 ln1.set('orig', '0.0')
-                ln1.set('norm', str(- transformer.data_min_[i] / (transformer.data_max_[i] - transformer.data_min_[i])))
-                ln2.set('orig', str(transformer.data_min_[i]))
+                ln1.set('norm', (- transformer.min_[i] / (transformer.data_max_[i] - transformer.min_[i])).astype(str))
+                ln2.set('orig', (transformer.min_[i]).astype(str))
                 ln2.set('norm', '0.0')
         else:
             norm_discrete = ET.SubElement(derived_field, 'FieldRef')
@@ -156,7 +156,7 @@ def _generate_neural_layers(neural_network, estimator):
         for j in range(cols):
             neuron = ET.SubElement(neural_layer, 'Neuron')
             neuron.set('id', '{},{}'.format(layer + 1, j))
-            neuron.set('bias', str(biases[j]))
+            neuron.set('bias', biases[j])
             for i in range(rows):
                 connection = ET.SubElement(neuron, 'Con')
                 connection.set('from', '{},{}'.format(layer, i))
