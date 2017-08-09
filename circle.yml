@@ -4,5 +4,4 @@ machine:
 
 dependencies:
     pre:
-    - sudo apt-get install python3-numpy
-    - sudo apt-get install python3-scipy
+    - sudo pip3 install numpy scipy
