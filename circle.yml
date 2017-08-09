@@ -4,4 +4,4 @@ machine:
 
 dependencies:
     pre:
-    - pip install numpy scipy
+    - pip install --verbose numpy scipy
