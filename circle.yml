@@ -1,4 +1,6 @@
 machine:
+    environment:
+        KERAS_BACKEND: theano python -c "from keras import backend"
     python:
         version: 3.5.0
 
