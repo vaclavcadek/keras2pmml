@@ -11,25 +11,39 @@ SUPPORTED_TRANSFORMERS = frozenset([StandardScaler, MinMaxScaler])
 SUPPORTED_ACTIVATIONS = {
     'tanh': 'tanh',
     'sigmoid': 'logistic',
-    'relu': 'rectifier'
+    'relu': 'rectifier', 
+    'softmax': 'identity'
 }
 
 
 def _validate_inputs(model, transformer, feature_names, target_values):
+    
     print('[x] Performing model validation.')
+    
     if not type(model) in SUPPORTED_MODELS:
         raise TypeError("Provided model is not supported.")
+    
     if not model.built:
         raise TypeError("Provide a fitted model.")
+    
     if transformer is not None and not type(transformer) in SUPPORTED_TRANSFORMERS:
         raise TypeError("Provided transformer is not supported.")
+    
+    activations = map(lambda x: x['config']['activation'], model.get_config())
+    for x in activations:
+        if x not in SUPPORTED_ACTIVATIONS.keys():
+            raise TypeError("Activation '%s' not supported." % (x))
+
     if model.input_shape[1] != len(feature_names):
         print('[!] Network input shape does not match provided feature names - using generic names instead.')
         feature_names = ['x{}'.format(i) for i in range(model.input_shape[1])]
+    
     if model.output_shape[1] != len(target_values):
         print('[!] Network output shape does not match provided target values - using generic names instead.')
         target_values = ['y{}'.format(i) for i in range(model.output_shape[1])]
+    
     print('[x] Model validation successful.')
+    
     return feature_names, target_values
 
 
@@ -68,9 +82,12 @@ def _generate_data_dictionary(root, feature_names, target_name, target_values):
 def _generate_neural_network(root, estimator, transformer, feature_names, target_name, target_values, model_name=None):
     neural_network = ET.SubElement(root, 'NeuralNetwork')
     neural_network.set('functionName', 'classification')
-    neural_network.set('activationFunction', 'logistic')
+    neural_network.set('activationFunction', 'logistic') # default, will be overriden later
+    neural_network.set('normalizationMethod', 'none') # default, will be overriden later
+
     if model_name:
         neural_network.set('modelName', model_name)
+
     _generate_mining_schema(neural_network, feature_names, target_name)
     _generate_output(neural_network, target_values)
     _generate_neural_inputs(neural_network, transformer, feature_names)
@@ -150,7 +167,14 @@ def _generate_neural_layers(neural_network, estimator):
         biases = params[1].astype(str)
         activation = params[2]
         neural_layer = ET.SubElement(neural_network, 'NeuralLayer')
-        neural_layer.set('activationFunction', SUPPORTED_ACTIVATIONS[activation])
+        if activation == 'softmax':
+            # if the output layer is multiclass classification, then we use the 
+            # 'identity' activation function and normalize the output using 'softmax'. 
+            # For details, see http://dmg.org/pmml/v4-3/NeuralNetwork.html
+            neural_layer.set('activationFunction', SUPPORTED_ACTIVATIONS[activation])
+            neural_layer.set('normalizationMethod', 'softmax')
+        else:
+            neural_layer.set('activationFunction', SUPPORTED_ACTIVATIONS[activation])
         rows = weights.shape[0]
         cols = weights.shape[1]
         for j in range(cols):
