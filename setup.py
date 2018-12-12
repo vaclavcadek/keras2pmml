@@ -23,8 +23,8 @@ setup(
         'numpy>=1.6.1',
         'SciPy>= 0.9',
         'theano>=0.8.2',
-        'keras>=1.0.6, <2.0',
-        'scikit-learn>=0.17.1'
+        'keras>=1.0.6',
+        'scikit-learn>=0.18'
     ],
     classifiers=[
         'Intended Audience :: Science/Research',
