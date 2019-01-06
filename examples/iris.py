@@ -2,7 +2,7 @@ from keras2pmml import keras2pmml
 from sklearn.datasets import load_iris
 import numpy as np
 import theano
-from sklearn.cross_validation import train_test_split
+from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from keras.utils import np_utils
 from keras.models import Sequential

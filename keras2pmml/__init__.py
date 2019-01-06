@@ -16,6 +16,11 @@ SUPPORTED_ACTIVATIONS = {
 }
 
 
+def _get_activations(model_config):
+    layers = model_config['layers'] if isinstance(model_config, dict) else model_config
+    return map(lambda x: x['config']['activation'], layers)
+
+
 def _validate_inputs(model, transformer, feature_names, target_values):
     
     print('[x] Performing model validation.')
@@ -28,8 +33,8 @@ def _validate_inputs(model, transformer, feature_names, target_values):
     
     if transformer is not None and not type(transformer) in SUPPORTED_TRANSFORMERS:
         raise TypeError("Provided transformer is not supported.")
-    
-    activations = map(lambda x: x['config']['activation'], model.get_config())
+
+    activations = _get_activations(model.get_config())
     for x in activations:
         if x not in SUPPORTED_ACTIVATIONS.keys():
             raise TypeError("Activation '%s' not supported." % (x))
@@ -161,7 +166,7 @@ def _generate_neural_inputs(neural_network, transformer, feature_names):
 def _generate_neural_layers(neural_network, estimator):
     layer_weights = estimator.get_weights()[0::2]
     layer_biases = estimator.get_weights()[1::2]
-    layer_activations = map(lambda x: x['config']['activation'], estimator.get_config())
+    layer_activations = _get_activations(estimator.get_config())
     for layer, params in enumerate(zip(layer_weights, layer_biases, layer_activations)):
         weights = params[0].astype(str)
         biases = params[1].astype(str)
